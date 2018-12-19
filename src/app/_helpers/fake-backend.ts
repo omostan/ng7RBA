@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { User } from '../_models/user';
-import { Role } from '../_models/role';
 import { mergeMap, materialize, dematerialize, delay } from 'rxjs/operators';
+import { User, Role } from '../_models';
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const users: User[] = [
             { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
-            { id: 2, username: 'user', password: 'user', firstName: 'Normal', lastName: 'User', role: Role.Admin }
+            { id: 2, username: 'user', password: 'user', firstName: 'Normal', lastName: 'User', role: Role.User }
         ];
 
         const authHeader = request.headers.get('Authorization');
@@ -36,7 +35,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }              
 
             // get user by id - admin or user (user can only access their own record)
-            if (request.url.match(/\/user\/\d+$/) && request.method === 'GET') {
+            if (request.url.match(/\/users\/\d+$/) && request.method === 'GET') {
                 if (!isLoggedIn) return unauthorized();
 
                 // get id from request url

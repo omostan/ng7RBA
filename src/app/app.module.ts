@@ -1,16 +1,20 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule, RoutingComponent } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor, ErrorInterceptor, fakeBackendProvider } from './_helpers';
+import { AlertComponent } from './_directives';
+import { AuthGuard } from './_guards';
+import { AlertService, AuthenticationService } from './_services';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoutingComponent
+    RoutingComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -19,6 +23,9 @@ import { JwtInterceptor, ErrorInterceptor, fakeBackendProvider } from './_helper
     AppRoutingModule
   ],
   providers: [
+    AuthGuard,
+    AlertService,
+    AuthenticationService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
 

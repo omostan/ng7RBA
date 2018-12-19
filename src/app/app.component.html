@@ -1,8 +1,8 @@
 <!-- nav -->
 <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
     <div class="navbar-nav">
-        <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" routerLink="/admin" *ngIf="isAdmin">Admin</a>
+        <a class="nav-item nav-link" [routerLink]="['']" routerLinkActive="router-link-active">Home</a>
+        <a class="nav-item nav-link" routerLink="['admin']" routerLinkActive="router-link-active" *ngIf="isAdmin">Admin</a>
         <a class="nav-item nav-link" (click)="logout()">Logout</a>
     </div>
 </nav>
@@ -12,6 +12,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
+                <app-alert></app-alert>
                 <router-outlet></router-outlet>
             </div>
         </div>

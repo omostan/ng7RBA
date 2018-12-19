@@ -11,7 +11,7 @@ import { first } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
 
   currentUser: User;
-  userFromAPi: User;
+  userFromApi: User;
 
   constructor(
     private userService: UserService,
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
 
   getUserById() {
     this.userService.getUserById(this.currentUser.id).pipe(first()).subscribe(user => {
-      this.userFromAPi = user;
+      this.userFromApi = user;
     });
   }
 }
