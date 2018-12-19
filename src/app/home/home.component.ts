@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../_models/user';
-import { AuthenticationService, UserService } from '../_services';
 import { first } from 'rxjs/operators';
+import { User } from '../_models';
+import { AuthenticationService, UserService } from '../_services';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +11,7 @@ import { first } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
 
   currentUser: User;
-  userFromAPi: User;
+  userFromApi: User;
 
   constructor(
     private userService: UserService,
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
 
   getUserById() {
     this.userService.getUserById(this.currentUser.id).pipe(first()).subscribe(user => {
-      this.userFromAPi = user;
+      this.userFromApi = user;
     });
   }
 }

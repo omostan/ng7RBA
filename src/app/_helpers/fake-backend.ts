@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { User } from '../_models/user';
-import { Role } from '../_models/role';
 import { mergeMap, materialize, dematerialize, delay } from 'rxjs/operators';
+import { User, Role } from '../_models';
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
