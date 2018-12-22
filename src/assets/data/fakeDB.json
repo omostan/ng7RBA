@@ -8,12 +8,20 @@
             "role": "Admin"
         },
         {
-            "id": 1,
+            "id": 2,
             "username": "user",
             "password": "user",
             "firstName": "Normal",
             "lastName": "User",
             "role": "User"
+        },
+        {
+            "id": 3,
+            "username": "omostan",
+            "password": "dmr",
+            "firstName": "Stanley",
+            "lastName": "Omoregie",
+            "role": "Admin"
         }
     ]
 }

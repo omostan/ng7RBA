@@ -19,8 +19,11 @@ export class AdminComponent implements OnInit {
   }
 
   getAll() {
-    this.userService.getAll().pipe(first()).subscribe(users => {
+    this.userService.getAll().subscribe(users => {
       this.users = users;
     })
+    // this.userService.getAll().pipe(first()).subscribe(users => {
+    //   this.users = users;
+    // })
   }
 }

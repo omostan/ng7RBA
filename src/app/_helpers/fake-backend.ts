@@ -1,38 +1,35 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
+import { delay, mergeMap, materialize, dematerialize, catchError, first } from 'rxjs/operators';
 import { User, Role } from '../_models';
-import { DataService } from '../_services';
+import { UserService } from '../_services';
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
-    // users: User[] = [];
-    users: User[] = [
-        { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
-        { id: 2, username: 'user', password: 'user', firstName: 'Normal', lastName: 'User', role: Role.User }
-    ];
-    
 
-    constructor(private dataService: DataService) {}
+    users: User[] = [];
+
+    constructor(private userService: UserService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        // const users: User[] = [
+        this.getAllUsers();
+        // this.users = [
         //     { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
-        //     { id: 2, username: 'user', password: 'user', firstName: 'Normal', lastName: 'User', role: Role.User }
-        // ];                       
-        
+        //     { id: 2, username: 'user', password: 'user', firstName: 'Normal', lastName: 'User', role: Role.User },
+        //     { id: 3, username: 'omostan', password: 'dmr', firstName: 'Stanley', lastName: 'Omoregie', role: Role.User }
+        // ];
+
         const authHeader = request.headers.get('Authorization');
-        const isLoggedIn = authHeader && authHeader.startsWith('Bearer  wvFxXr4lGEhD8Cs7Wrp-q9UVQdErrs2X');
+        const isLoggedIn = authHeader && authHeader.startsWith('Bearer wvFxXr4lGEhD8Cs7Wrp-q9UVQdErrs2X');
         const roleString = isLoggedIn && authHeader.split('.')[1];
         const role = roleString ? Role[roleString] : null;
 
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
-
+            
             // authenticate - public
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
-                // this.getAllUsers();
+            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {                
                 const user = this.users.find(x => x.username === request.body.username && x.password === request.body.password);
                 if (!user) return error('Username or password is incorrect');
                 return ok({
@@ -43,7 +40,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     role: user.role,
                     token: `wvFxXr4lGEhD8Cs7Wrp-q9UVQdErrs2X.${user.role}`
                 });
-            }              
+            }
 
             // get user by id - admin or user (user can only access their own record)
             if (request.url.match(/\/users\/\d+$/) && request.method === 'GET') {
@@ -86,14 +83,21 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
 
         function error(message) {
-            return throwError({ status: 400, error: { message } })
+            return throwError({ status: 400, error: { message } });
         }
     }
 
-    getAllUsers(): any {
-        this.dataService.getAllUsers().subscribe((users: User[]) => { this.users = users; });        
-        console.log('users: ' + JSON.stringify(this.users)); 
-    }
+    getAllUsers() {
+        this.userService.getAll().pipe(first()).subscribe(
+          (data: User []) => {
+              this.users = data;
+          },
+          catchError(err => {    
+            return throwError(err);
+          }),
+          () => console.log('Successfully fetched data from REST server!')
+        );
+      }
 }
 
 export let fakeBackendProvider = {
