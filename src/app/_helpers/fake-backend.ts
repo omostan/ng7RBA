@@ -74,7 +74,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         // private helper functions
 
-        function ok(body) {
+        function ok(body: any) {
             return of(new HttpResponse({ status: 200, body }));
         }
 
@@ -82,12 +82,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return throwError({ status: 401, error: { message: 'Unauthorized' } });
         }
 
-        function error(message) {
+        function error(message: string) {
             return throwError({ status: 400, error: { message } });
         }
     }
 
-    getAllUsers() {
+    //#region getAllUsers 
+
+getAllUsers() {
         this.userService.getAll().pipe(first()).subscribe(
           (data: User []) => {
               this.users = data;
@@ -98,6 +100,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           () => console.log('Successfully fetched data from REST server!')
         );
       }
+
+//#endregion getAllUsers
 }
 
 export let fakeBackendProvider = {
