@@ -87,7 +87,9 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
     }
 
-    getAllUsers() {
+    //#region getAllUsers 
+
+getAllUsers() {
         this.userService.getAll().pipe(first()).subscribe(
             (data: User[]) => {
               this.users = data;
@@ -96,6 +98,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           () => console.log('Successfully fetched data from REST server!')
         );
       }
+
+//#endregion getAllUsers
 }
 
 export let fakeBackendProvider = {
