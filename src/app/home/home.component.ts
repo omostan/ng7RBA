@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUserById() {
-    this.userService.getUserById(this.currentUser.id).subscribe(user => {
+    this.userService.getUserById(this.currentUser.id).subscribe((user: User) => {
       this.userFromApi = user;
     });
     // this.userService.getUserById(this.currentUser.id).pipe(first()).subscribe(user => {

@@ -27,11 +27,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
-            
+
             // authenticate - public
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {                
+            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
                 const user = this.users.find(x => x.username === request.body.username && x.password === request.body.password);
-                if (!user) return error('Username or password is incorrect');
+                if (!user) {
+                  return error('Username or password is incorrect');
+                }
                 return ok({
                     id: user.id,
                     username: user.username,
@@ -44,15 +46,15 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             // get user by id - admin or user (user can only access their own record)
             if (request.url.match(/\/users\/\d+$/) && request.method === 'GET') {
-                if (!isLoggedIn) return unauthorized();
+                if (!isLoggedIn) { return unauthorized(); }
 
                 // get id from request url
-                let urlParts = request.url.split('/');
-                let id = parseInt(urlParts[urlParts.length - 1]);
+                const urlParts = request.url.split('/');
+                const id = parseInt(urlParts[urlParts.length - 1]);
 
                 // only allow normal users access to their own record
                 const currentUser = this.users.find(x => x.role === role);
-                if (id !== currentUser.id && role !== Role.Admin) return unauthorized();
+                if (id !== currentUser.id && role !== Role.Admin) { return unauthorized(); }
 
                 const user = this.users.find(x => x.id === id);
                 return ok(user);
@@ -60,13 +62,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             // get all users (admin only)
             if (request.url.endsWith('/users') && request.method === 'GET') {
-                if (role !== Role.Admin) return unauthorized();
+                if (role !== Role.Admin) { return unauthorized(); }
                 return ok(this.users);
             }
 
             // pass through any requests not handled above
             return next.handle(request);
         }))
+        // tslint:disable-next-line: max-line-length
         // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
         .pipe(materialize())
         .pipe(delay(500))
@@ -87,7 +90,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
     }
 
-    //#region getAllUsers 
+    //#region getAllUsers
 
 getAllUsers() {
         this.userService.getAll().pipe(first()).subscribe(

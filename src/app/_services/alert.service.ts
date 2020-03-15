@@ -7,7 +7,7 @@ import { Router, NavigationStart } from '@angular/router';
 })
 export class AlertService {
   private subject: any = new Subject<any>();
-  private keepAfterNavigationChange: boolean = false;
+  private keepAfterNavigationChange = false;
 
   constructor(private router: Router) {
     // clear alert message on route change
@@ -16,7 +16,7 @@ export class AlertService {
         if (this.keepAfterNavigationChange) {
           // only keep for a single location change
           this.keepAfterNavigationChange = false;
-        }else{
+        } else {
           // clear alert
           this.subject.next();
         }
